@@ -6,6 +6,6 @@ public class BlastRangeUpgrade : Upgrade
 
 	public override void ApplyUpgrade(Player player)
 	{
-		player.UpgradeBombRange(rangeIncrease);
+		player.Bomber.UpgradeRange(rangeIncrease);
 	}
 }

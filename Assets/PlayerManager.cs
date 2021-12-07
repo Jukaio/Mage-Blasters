@@ -11,6 +11,7 @@ public class PlayerManager : MonoBehaviour
 	[SerializeField] private PlayerSkinLibrary skinLibrary;
 	[SerializeField] private AvatarGUI[] playerGUI;
 
+	private Coroutine routine = null;
 	private Dictionary<int, Player> players = new Dictionary<int, Player>();
 
 	private const string CATEGORY = "IdleDown";
@@ -35,7 +36,7 @@ public class PlayerManager : MonoBehaviour
 			}
 		}
 	}
-	private Coroutine routine = null;
+
 	public void Kill(Player player)
 	{
 		if (players.ContainsValue(player)) {

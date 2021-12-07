@@ -154,16 +154,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ec1c6aafc39d485b9951752020d245a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bombPool: {fileID: 5038233132304352230}
-  bombParameters:
-    tickTime: 3
-    range: 1
-    blastDuration: 0.5
-    bombChainDelay: 0
-  deathDuration: 1.5
-  deathBlinkRateStart: 0.05
-  deathBlinkRateEnd: 0.2
-  playerAudioLibrary: {fileID: 11400000, guid: 73e7d19062d01d24aa94dca86739ee82, type: 2}
+  bomb:
+    bombPool: {fileID: 5038233132304352230}
+    bombParameters:
+      tickTime: 3
+      range: 1
+      blastDuration: 0.5
+      bombChainDelay: 0
+    playerAudioLibrary: {fileID: 11400000, guid: 73e7d19062d01d24aa94dca86739ee82, type: 2}
+  death:
+    deathDuration: 1
+    deathBlinkRateStart: 0.05
+    deathBlinkRateEnd: 0.2
+    playerAudioLibrary: {fileID: 11400000, guid: 73e7d19062d01d24aa94dca86739ee82, type: 2}
 --- !u!50 &5038233133743342496
 Rigidbody2D:
   serializedVersion: 4

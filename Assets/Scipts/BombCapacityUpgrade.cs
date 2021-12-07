@@ -6,6 +6,6 @@ public class BombCapacityUpgrade : Upgrade
 
 	public override void ApplyUpgrade(Player player)
 	{
-		player.UpgradeBombCapacity(capacityIncrease);
+		player.Bomber.UpgradeCapacity(capacityIncrease);
 	}
 }

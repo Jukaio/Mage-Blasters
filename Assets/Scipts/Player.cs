@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.U2D.Animation;
@@ -7,58 +6,84 @@ using System.Linq;
 using UnityEditor;
 #endif
 
+public interface Executable
+{
+    void Execute();
+}
+
 [RequireComponent(typeof(Rigidbody2D))]
 public class Player : MonoBehaviour
 {
-	[Header("Bomb Settings")]
-    [SerializeField] private BombPool bombPool;
-    [SerializeField] private Bomb.Parameters bombParameters;
-    [Space]
-
-    [Header("Death Settings")]
-    [SerializeField] private float deathDuration = 1.0f;
-    [SerializeField] private float deathBlinkRateStart = 0.05f;
-    [SerializeField] private float deathBlinkRateEnd = 0.2f;
-    [Space]
+    [SerializeField] private Bomber bomber;
+    [SerializeField] private Death death;
 
     [Header("Content Settings")]
     [SerializeField] private PlayerAudioLibrary playerAudioLibrary;
     
+    public Bomber Bomber => bomber;
+
     private Rigidbody2D rigidBody;
     private Vector2 lookDirection = Vector2.down;
     private Vector2 walkDirection = Vector2.zero;
     private CircleCollider2D circleCollider = null;
     private Animator animator = null;
-    private Coroutine deathRoutine = null;
-    private AudioSource audioSource = null;
-    private SpriteRenderer spriteRenderer;
     private SpriteResolver spriteResolver = null;
     private PlayerControlSettings playerControlSettings = null;
-    private HashSet<Bomb> usedBombs = new HashSet<Bomb>();
-    private bool isDying => deathRoutine != null;
-    private Bomb.Parameters initialBombParameters;
+
+    private List<SubComponent> subComponents = new List<SubComponent>();
+
 
     private void Awake()
     {
-        initialBombParameters = bombParameters;
+        subComponents.Add(bomber);
+        subComponents.Add(death);
+
+        foreach(var component in subComponents) {
+            component.Construct(this);
+		}
+
+        foreach (var component in subComponents) {
+            component.OnAwake();
+        }
+
         rigidBody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         circleCollider = GetComponent<CircleCollider2D>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        audioSource = GetComponent<AudioSource>();
         spriteResolver = GetComponent<SpriteResolver>();
     }
 
-    void Update()
+	private void Start()
+	{
+        foreach (var component in subComponents) {
+            component.OnStart();
+        }
+    }
+
+	private void OnEnable()
+	{
+        foreach (var component in subComponents) {
+            component.OnEnable();
+        }
+        animator.enabled = true;
+    }
+
+	private void OnDisable()
+	{
+        foreach (var component in subComponents) {
+            component.OnDisable();
+        }
+    }
+
+	void Update()
     {
-        if(isDying) {
+        if (death.IsDying) {
             return;
 		}
 
         if (playerControlSettings != null) {
             playerControlSettings.HandleInput(out walkDirection, out bool planted);
             if (planted) {
-                PlantBomb();
+                bomber.Execute();
             }
         }
         else {
@@ -66,11 +91,6 @@ public class Player : MonoBehaviour
         }
     }
 
-	private void OnEnable()
-	{
-        animator.enabled = true;
-
-    }
 
 	private void FallBackDefaultInputHandling()
     {
@@ -88,55 +108,15 @@ public class Player : MonoBehaviour
         walkDirection.Normalize();
 
         if (Input.GetKeyDown(KeyCode.Space)) {
-            PlantBomb();
-        }
-    }
-
-    private void PlantBomb()
-    {
-        var index = World.Instance.WorldToIndex(transform.position);
-        if (!World.Instance.GetDataTile(index).HasBomb) {
-            if (bombPool.TryReceive(out var bomb)) {
-                usedBombs.Add(bomb);
-                bomb.SetOff(index, bombParameters, () => {
-                    usedBombs.Remove(bomb);
-                    bombPool.Release(bomb);
-                });
-            }
+            bomber.Execute();
         }
     }
 
     public void Setup()
     {
-        foreach (var bomb in usedBombs) {
-            bombPool.Release(bomb);
-
+        foreach (var component in subComponents) {
+            component.OnSetup();
         }
-        usedBombs.Clear();
-        if(isDying) {
-            StopCoroutine(deathRoutine);
-            deathRoutine = null;
-            Color color = spriteRenderer.color;
-            color.a = 1.0f;
-            spriteRenderer.color = color;
-        }
-        bombParameters = initialBombParameters;
-    }
-
-    private void AnimatorSetVector2(string name, Vector2 that)
-    {
-        animator.SetFloat($"{name}X", that.x);
-        animator.SetFloat($"{name}Y", that.y);
-    }
-
-    public void UpgradeBombCapacity(uint capacity)
-    {
-        bombPool.SetMaximumCapacity(bombPool.MaxCapacity + (int)capacity);
-    }
-
-    public void UpgradeBombRange(uint range)
-    {
-        bombParameters.SetRange(bombParameters.Range + (int)range);
     }
 
     public void SetSpriteLibrary(SpriteLibraryAsset libraryAsset)
@@ -145,8 +125,8 @@ public class Player : MonoBehaviour
         spriteResolver.spriteLibrary.RefreshSpriteResolvers();
 
         animator.SetBool("isWalking", false);
-        AnimatorSetVector2("look", Vector2.down);
-        AnimatorSetVector2("walk", Vector2.zero);
+        animator.SetVector2("look", Vector2.down);
+        animator.SetVector2("walk", Vector2.zero);
     }
 
     public void SetPlayerControlSettings(PlayerControlSettings playerControlSettingss)
@@ -156,7 +136,7 @@ public class Player : MonoBehaviour
 
 	private void FixedUpdate()
     {
-        if (isDying) {
+        if (death.IsDying) {
             return;
         }
 
@@ -177,55 +157,17 @@ public class Player : MonoBehaviour
 		}
 
         animator.SetBool("isWalking", isWalking);
-        AnimatorSetVector2("look", lookDirection);
-        AnimatorSetVector2("walk", walkDirection);
+        animator.SetVector2("look", lookDirection);
+        animator.SetVector2("walk", walkDirection);
 
 
         var data = World.Instance.GetDataTile(index);
         if (data.HasExplosion) {
-            Die();
+            death.Execute();
 		}
         if(data.TryGetUpgrade(out var upgrade)) {
             upgrade.ApplyUpgrade(this);
-            playerAudioLibrary.PlayOnUpgrade(audioSource);
             upgrade.Despawn();
 		}
-    }
-
-    private void Die()
-    {
-        if (deathRoutine == null) {
-            deathRoutine = StartCoroutine(Dying());
-        }
-    }
-
-    private IEnumerator Dying()
-    {
-        float t = 0.0f;
-        float timeIncreasse = 1.0f / deathDuration;
-        bool isVisible = false;
-        var color = spriteRenderer.color;
-
-        animator.SetBool("isWalking", false);
-        AnimatorSetVector2("look", Vector2.down);
-        AnimatorSetVector2("walk", Vector2.zero);
-        
-        playerAudioLibrary.PlayOnDeath(audioSource);
-
-        while (t < 1.0f) {
-            color.a = isVisible ? 1.0f : 0.0f;
-            spriteRenderer.color = color;
-            isVisible = !isVisible;
-            var rate = Mathf.SmoothStep(deathBlinkRateStart, deathBlinkRateEnd, t);
-            t += rate * timeIncreasse;
-            yield return new WaitForSeconds(rate);
-		}
-
-        color.a = 1.0f;
-        spriteRenderer.color = color;
-        gameObject.SetActive(false);
-        deathRoutine = null;
-
-        Service<PlayerManager>.Instance.Kill(this);
     }
 }
