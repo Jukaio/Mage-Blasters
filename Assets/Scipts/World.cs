@@ -8,6 +8,7 @@ public class World : SingletonMonobehaviour<World>
 	public class DataTile : TileBase
 	{
 		public bool HasBomb { get; set; }
+		public bool IsMelting { get; set; }
 		public bool HasExplosion { get; set; }
 		public Upgrade Upgrade { get; set; }
 
@@ -118,14 +119,14 @@ public class World : SingletonMonobehaviour<World>
 
 	public bool TryRemoveDestructible(Vector2Int index, float duration) 
 	{
-		if(HasDestructible(index)) {
+		if(HasDestructible(index) && GetDataTile(index).IsMelting == false) {
 			RemoveDestructible(index, duration);
 			return true;
 		}
 		return false;
 	}
 
-	public bool HasDestructible(Vector2Int index)
+	private bool HasDestructible(Vector2Int index)
 	{
 		return destructibles.GetTile((Vector3Int)index) != null;
 	}
@@ -140,12 +141,15 @@ public class World : SingletonMonobehaviour<World>
 
 	public void MeltAtIndex(Vector2Int index, float duration)
 	{
-		StartCoroutine(AnimateMelting(index, meltPool.Receive(), duration));
+		if(GetDataTile(index).IsMelting == false) {
+			StartCoroutine(AnimateMelting(index, meltPool.Receive(), duration));
+		}
 	}
 
 	private IEnumerator AnimateMelting(Vector2Int index, Melt melt, float duration, System.Action onEnd = null)
 	{
-
+		var tile = GetDataTile(index);
+		tile.IsMelting = true;
 		melt.transform.position = IndexToWorld(index);
 		var timeIncreaseRate = 1 / duration; // hardcoded duration rhs
 
@@ -165,6 +169,7 @@ public class World : SingletonMonobehaviour<World>
 		if (onEnd != null) {
 			onEnd.Invoke();
 		}
+		tile.IsMelting = false;
 	}
 
 	private void CleanUpUpgrade(Upgrade upgrade)

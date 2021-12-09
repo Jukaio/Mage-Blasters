@@ -60,7 +60,7 @@ public class ObjectPool<T> : IObjectPool<T> where T : class
 	[SerializeField] private int maxCapacity = int.MaxValue;
 	[SerializeField] private bool isSafe = false;
 #else
-	private int minCapacity = int.MinValue;
+	private int minCapacity = 0;
 	private int maxCapacity = int.MaxValue;
 	private bool isSafe = false;
 #endif
@@ -121,7 +121,9 @@ public class ObjectPool<T> : IObjectPool<T> where T : class
 	{
 		used += 1;
 		if (pool.TryPop(out var item)) {
-			onReceive(item);
+			if (onReceive != null) {
+				onReceive(item);
+			}
 			return item;
 		}
 
@@ -143,7 +145,9 @@ public class ObjectPool<T> : IObjectPool<T> where T : class
 		}
 
 		used -= 1;
-		onRelease(that);
+		if (onRelease != null) {
+			onRelease(that);
+		}
 		pool.Push(that);
 	}
 
@@ -151,7 +155,9 @@ public class ObjectPool<T> : IObjectPool<T> where T : class
 	{
 		if(onClear != null) {
 			foreach(var element in pool) {
-				onClear(element);
+				if (onClear != null) {
+					onClear(element);
+				}
 			}
 		}
 		pool.Clear();
@@ -181,14 +187,18 @@ public class ObjectPool<T> : IObjectPool<T> where T : class
 		const int added = 1;
 		if (pool.TryPop(out that)) {
 			used += 1;
-			onReceive(that);
+			if (onReceive != null) {
+				onReceive(that);
+			}
 			return true;
 		}
 		else if (capaciy + added <= maxCapacity) {
 			used += 1;
 			CacheNewItems(added); // Hardcoded 1 for now
 			that = pool.Pop();
-			onReceive(that);
+						if (onReceive != null) {
+				onReceive(that);
+			}
 			return true;
 		}
 		that = null;
