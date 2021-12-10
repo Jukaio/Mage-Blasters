@@ -1,4 +1,8 @@
 # Mage-Busters by David Naußed
+The game so far is a little bomberman clone with a Menu and Gameplay
+The menu allows each player to decide if they want to play with up to four players and it lets them check the controls for their chosen character slot.
+The gameplay is simple bomberman with some upgrades and such.
+
 ## Design Patterns
 
 ### Singleton
