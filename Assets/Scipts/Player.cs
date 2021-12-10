@@ -16,9 +16,6 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private Bomber bomber;
     [SerializeField] private Death death;
-
-    [Header("Content Settings")]
-    [SerializeField] private PlayerAudioLibrary playerAudioLibrary;
     
     public Bomber Bomber => bomber;
 

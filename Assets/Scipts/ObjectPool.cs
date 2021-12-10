@@ -5,7 +5,8 @@ using System.Collections.Generic;
 using UnityEngine;
 #endif
 
-public interface IPool<T> where  T : class
+
+public interface IPool<T> where T : class
 {
 	void Clear();
 	T Receive();
@@ -15,12 +16,19 @@ public interface IPool<T> where  T : class
 
 public interface IObjectPool<T> : IPool<T> where T : class
 {
+	public delegate void OnReceive(T that);
+	public delegate void OnRelease(T that);
+	public delegate void OnClear(T that);
+
 	int Count { get; }
 	int Capacity { get; }
 	public int MaxCapacity { get; }
 	public int MinCapacity { get; }
 	IObjectPool<T> SetMaximumCapacity(int that);
 	IObjectPool<T> SetMinimumCapacity(int that);
+	IObjectPool<T> SetOnReceive(OnReceive onReceive);
+	IObjectPool<T> SetOnRelease(OnRelease onRelease);
+	IObjectPool<T> SetOnClear(OnClear onClear);
 }
 
 public class PoolOverflowException : Exception
@@ -37,55 +45,58 @@ public class PoolIllegalItemException : Exception
 }
 
 [Serializable]
+public struct PoolParameters
+{
+	[SerializeField] public int minCapacity;
+	[SerializeField] public int maxCapacity;
+
+	public PoolParameters(int min, int max)
+	{
+		this.minCapacity = min;
+		this.maxCapacity = max;
+	}
+
+	public override string ToString()
+	{
+		return $"Minimum: {minCapacity} - Maximum: {maxCapacity}";
+	}
+
+	public bool IsValid => minCapacity <= maxCapacity;
+}
+
+[Serializable]
 public class ObjectPool<T> : IObjectPool<T> where T : class
 {
 	public delegate T OnCreate();
-	public delegate void OnReceive(T that);
-	public delegate void OnRelease(T that);
-	public delegate void OnClear(T that);
 
 	private OnCreate onCreate = null;
-	private OnReceive onReceive = null;
-	private OnRelease onRelease = null;
-	private OnClear onClear = null;
+	private IObjectPool<T>.OnReceive onReceive = null;
+	private IObjectPool<T>.OnRelease onRelease = null;
+	private IObjectPool<T>.OnClear onClear = null;
 
 	private Stack<T> pool = new Stack<T>();
-	private HashSet<T> safetyCheck = null;
 
-	private int used = 0;
 	private int capaciy = 0;
-
 #if UNITY_EDITOR || UNITY_5_3_OR_NEWER
-	[SerializeField] private int minCapacity = 0;
-	[SerializeField] private int maxCapacity = int.MaxValue;
-	[SerializeField] private bool isSafe = false;
+	[SerializeField] private PoolParameters parameters;
 #else
-	private int minCapacity = 0;
-	private int maxCapacity = int.MaxValue;
-	private bool isSafe = false;
+	private PoolParameters parameters;
 #endif
 
 	public int Count => pool.Count;
 	public int Capacity => capaciy;
-	public int MaxCapacity => maxCapacity;
-	public int MinCapacity => minCapacity;
-	public bool IsSafe => isSafe;
+	public int MaxCapacity => parameters.maxCapacity;
+	public int MinCapacity => parameters.minCapacity;
 
-	public ObjectPool(OnCreate onCreate, int minCount = 0, int maxCount = int.MaxValue, bool isSafe = false)
+	public ObjectPool(OnCreate onCreate, PoolParameters poolParameters)
 	{
-		if(minCount > maxCount) {
+		if(!poolParameters.IsValid) {
 			throw new PoolArgumentException($"Cannot have minimum count that is bigger than maximum count in {this.ToString()}!");
 		}
 		
-		if(isSafe == true) {
-			safetyCheck = new HashSet<T>();
-		}
-		
 		this.onCreate = onCreate;
-		this.minCapacity = minCount;
-		this.maxCapacity = maxCount;
-		this.isSafe = isSafe;
-		CacheNewItems(minCount);
+		parameters = poolParameters;
+		CacheNewItems(parameters.minCapacity);
 	}
 
 	private void CacheNewItems(int count)
@@ -93,25 +104,22 @@ public class ObjectPool<T> : IObjectPool<T> where T : class
 		for (int i = 0; i < count; i++) {
 			var item = onCreate();
 			onRelease(item);
-			if (safetyCheck != null) {
-				safetyCheck.Add(item);
-			}
 			pool.Push(item);
 			capaciy += 1;
 		}
 	}
 
-	public ObjectPool<T> SetOnReceive(OnReceive onReceive)
+	public IObjectPool<T> SetOnReceive(IObjectPool<T>.OnReceive onReceive)
 	{
 		this.onReceive = onReceive;
 		return this;
 	}
-	public ObjectPool<T> SetOnRelease(OnRelease onRelease)
+	public IObjectPool<T> SetOnRelease(IObjectPool<T>.OnRelease onRelease)
 	{
 		this.onRelease = onRelease;
 		return this;
 	}
-	public ObjectPool<T> SetOnClear(OnClear onClear)
+	public IObjectPool<T> SetOnClear(IObjectPool<T>.OnClear onClear)
 	{
 		this.onClear = onClear;
 		return this;
@@ -119,7 +127,6 @@ public class ObjectPool<T> : IObjectPool<T> where T : class
 
 	public T Receive()
 	{
-		used += 1;
 		if (pool.TryPop(out var item)) {
 			if (onReceive != null) {
 				onReceive(item);
@@ -128,23 +135,20 @@ public class ObjectPool<T> : IObjectPool<T> where T : class
 		}
 
 		const int added = 1;
-		if (capaciy + added > maxCapacity) {
+		if (capaciy + added > parameters.maxCapacity) {
 			throw new PoolOverflowException($"Not enough space in {this.ToString()}!");
 		}
 		CacheNewItems(added); // Hardcoded 1 for now
 
 		item = pool.Pop();
-		onReceive(item);
+		if (onReceive != null) {
+			onReceive(item);
+		}
 		return item;
 	}
 
 	public void Release(T that) 
 	{
-		if (safetyCheck != null && !safetyCheck.Contains(that)) {
-			throw new PoolIllegalItemException($"{that.ToString()} does not belong to {this.ToString()}");
-		}
-
-		used -= 1;
 		if (onRelease != null) {
 			onRelease(that);
 		}
@@ -162,23 +166,19 @@ public class ObjectPool<T> : IObjectPool<T> where T : class
 		}
 		pool.Clear();
 
-		if (safetyCheck != null) {
-			safetyCheck?.Clear();
-		}
-
 		capaciy = 0;
-		CacheNewItems(minCapacity);
+		CacheNewItems(parameters.minCapacity);
 	}
 
 	public IObjectPool<T> SetMaximumCapacity(int that)
 	{
-		maxCapacity = that;
+		parameters.maxCapacity = that;
 		return this;
 	}
 
 	public IObjectPool<T> SetMinimumCapacity(int that)
 	{
-		minCapacity = that;
+		parameters.minCapacity = that;
 		return this;
 	}
 
@@ -186,17 +186,15 @@ public class ObjectPool<T> : IObjectPool<T> where T : class
 	{
 		const int added = 1;
 		if (pool.TryPop(out that)) {
-			used += 1;
 			if (onReceive != null) {
 				onReceive(that);
 			}
 			return true;
 		}
-		else if (capaciy + added <= maxCapacity) {
-			used += 1;
+		else if (capaciy + added <= parameters.maxCapacity) {
 			CacheNewItems(added); // Hardcoded 1 for now
 			that = pool.Pop();
-						if (onReceive != null) {
+			if (onReceive != null) {
 				onReceive(that);
 			}
 			return true;
@@ -205,4 +203,86 @@ public class ObjectPool<T> : IObjectPool<T> where T : class
 		return false;
 	}
 }
+
+public class SafeObjectPool<T> : IObjectPool<T> where T : class
+{
+	private ObjectPool<T> pool = null;
+	private HashSet<T> lookup = null;
+
+	public int Count => pool.Count;
+
+	public int Capacity => pool.Capacity;
+
+	public int MaxCapacity => pool.MaxCapacity;
+
+	public int MinCapacity => pool.MinCapacity;
+
+	public SafeObjectPool(ObjectPool<T>.OnCreate onCreate, PoolParameters poolParameters)
+	{
+		pool = new ObjectPool<T>(onCreate, poolParameters);
+		lookup = new HashSet<T>();
+	}
+
+	public void Clear()
+	{
+		pool.Clear();	
+	}
+
+	public T Receive()
+	{
+		var item = pool.Receive();
+		lookup.Add(item);
+		return item;
+	}
+
+	public void Release(T that)
+	{
+		if (!lookup.Contains(that)) {
+			throw new PoolIllegalItemException($"{that} does not belong to {this}");
+		}
+
+		lookup.Remove(that);
+		pool.Release(that);
+	}
+
+	public IObjectPool<T> SetMaximumCapacity(int that)
+	{
+		_ = pool.SetMaximumCapacity(that);
+		return this;
+	}
+
+	public IObjectPool<T> SetMinimumCapacity(int that)
+	{
+		_ = pool.SetMinimumCapacity(that);
+		return this;
+	}
+
+	public bool TryReceive(out T that)
+	{
+		if(pool.TryReceive(out that)) {
+			lookup.Add(that);
+			return true;
+		}
+		return false;
+	}
+
+	public IObjectPool<T> SetOnReceive(IObjectPool<T>.OnReceive onReceive)
+	{
+		_ = pool.SetOnReceive(onReceive);
+		return this;
+	}
+
+	public IObjectPool<T> SetOnRelease(IObjectPool<T>.OnRelease onRelease)
+	{
+		_ = pool.SetOnRelease(onRelease);
+		return this;
+	}
+
+	public IObjectPool<T> SetOnClear(IObjectPool<T>.OnClear onClear)
+	{
+		_ = pool.SetOnClear(onClear);
+		return this;
+	}
+}
+
 

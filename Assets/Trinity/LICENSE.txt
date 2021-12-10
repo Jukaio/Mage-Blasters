@@ -1,0 +1,139 @@
+Beta Participation  Agreement 
+
+This Alteruna Beta participation agreement (BPA) for our Trinity Multiplayer solution (hereinafter 
+“Software”) is a legal agreement (hereinafter "Agreement") between Alteruna AB and you, either 
+an individual or a single entity, (hereinafter "Licensee"). This Agreement covers all software, cloud-
+services, the associated media, any printed materials, data, files and information and any "online" 
+or “mobile in-app” or electronic documentation ("Software") which it accompanies, and which has 
+been provided to Licensee without payment of any fees or costs. The third-party software 
+Lightnetlib-dll is a MIT-license and not part of the Alteruna Beta Participation Agreement. This 
+Agreement takes precedence over any other agreement or terms embedded within the software.
+Alteruna AB may revise and update this agreement at any moment without noting by posting the 
+amended terms to our Discord Channel: https://discord.gg/QT8KTe2Hzk.  Your continued use of 
+the Alteruna offerings means that you accept and agree to the revisited agreement.
+
+Assent to Be Bound
+By tapping the "I accept the terms..." during registration, or by executing a written copy of this 
+Agreement, or by downloading, installing, copying or otherwise using this Software, Licensee 
+agrees to be bound by the terms of this Agreement. If Licensee does not agree with any term or 
+condition, do not download, open, install or use the Software. Contact Alteruna AB to arrange to 
+be removed from the Beta Testing program at no charge to Licensee. In addition, certain third-
+party code may be provided with the Software and/or Service. The third-party license terms 
+accompanying such code, and not the terms of this Agreement, will govern your use of such code.
+
+DISCLAIMER
+THE BETA SOFTWARE LICENSED HEREUNDER MAY CONTAIN DEFECTS AND A PRIMARY 
+PURPOSE OF THIS BETA TESTING LICENSE, FOR WHICH NO FEES HAVE BEEN CHARGED OR 
+ARE DUE FROM LICENSEE, IS TO OBTAIN FEEDBACK ON SOFTWARE PERFORMANCE AND 
+THE IDENTIFICATION OF DEFECTS. LICENSEE IS ADVISED TO SAFEGUARD IMPORTANT 
+DATA, TO USE CAUTION AND NOT TO RELY IN ANY WAY ON THE CORRECT FUNCTIONING 
+OR PERFORMANCE OF THE SOFTWARE AND/OR ACCOMPANYING MATERIALS.
+
+Feedback from Licensee
+It is expressly understood, acknowledged and agreed that Licensee shall, regardless of whether or 
+not formally requested to do, provide to Alteruna AB reasonable suggestions, comments and 
+feedback regarding the Software, including but not limited to usability, bug reports and test 
+results, with respect to Software testing (collectively, "Feedback"). Contingent upon all of the 
+terms and conditions herein and especially upon Licensee's obligations to provide Feedback, 
+Licensee grants Alteruna AB, under all of Licensee's intellectual property and proprietary rights, 
+the following worldwide, non-exclusive, perpetual, irrevocable, royalty free, fully paid up rights: (i) 
+to make, use, copy, modify, sell, distribute, sub-license, and create derivative works of, the 
+Feedback as part of any Alteruna AB product, technology, service, specification or other 
+documentation (individually and collectively, "Alteruna Products"); (ii) to publicly perform or 
+display, import, broadcast, transmit, distribute, license, offer to sell, and sell, rent, lease or lend 
+copies of the Feedback (and derivative works thereof) as part of any Alteruna AB Products; (iii) 
+solely with respect to Licensee's copyright and trade secret rights, to sublicense to third parties 
+the foregoing rights, including the right to sublicense to further third parties; and (iv) to sublicense 
+to third parties any claims of any patents owned or licensable by Licensee that are necessarily 
+infringed by a third party product, technology or service that uses, interfaces, interoperates or 
+communicates with the feedback or portion thereof incorporated into a Alteruna AB Product, 
+technology or service. Further, Licensee warrants that Licensee's Feedback is not subject to any 
+license terms that would purport to require Alteruna AB to comply with any additional obligations 
+with respect to any Alteruna AB Products that incorporate any Feedback.
+
+Grant of License
+Subject to the terms and conditions of this Agreement, Alteruna AB grants to Licensee a non-
+exclusive, non-transferable license (without the right to sublicense) to use the Software solely for 
+purposes of internal testing and evaluation.
+
+Restrictions on Grant
+Except as otherwise specifically permitted in this Agreement, Licensee may not:(a) Modify or 
+create any derivative works of any Software or documentation, including translation or localization 
+(code written to published APIs (application programming interfaces) for the Software shall not be 
+deemed derivative works); (b) Copy the Software except as provided in this Agreement or 
+elsewhere by Alteruna AB; (c) Separate Software, which is licensed as a single product, into its 
+component parts. (d) Sublicense or permit simultaneous use of the Software by more than one 
+user; (e) Reverse engineer, decompile, or disassemble or otherwise attempt to derive the source 
+code for any Product the Software (except to the extent applicable laws specifically prohibit such 
+restriction); (f) Redistribute, encumber, sell, rent, lease, sublicense, use the Software in a 
+timesharing or service bureau arrangement, or otherwise transfer rights to any Software. You may 
+NOT transfer the Software under any circumstances; (g) Remove or alter any trademark, logo, 
+copyright or other proprietary notices, legends, symbols or labels in the Product(s); (h) Capture and 
+publish any screen shots of the Software’s user interface, user workflow or any other graphical 
+user interface assets online, to the public or a third party without Alteruna AB’s prior written 
+consent; (i) Publish any results of benchmark tests run on any Software to a third party without 
+Alteruna AB’s prior written consent.
+
+Beta-Software Product Support
+Alteruna AB is under no obligation to provide technical support under the terms of this license and 
+provides no assurance that any specific errors or discrepancies in the Software will be corrected.
+
+Ownership and Copyright of Software
+Title to the Software and all copies thereof remain with Alteruna AB and/or or its suppliers. The 
+Software is copyrighted and is protected by Swedish and international copyright laws and 
+international treaty provisions. Licensee will not remove copyright notices from the Software. 
+Licensee agrees to prevent any unauthorized copying of the Software. Except as expressly 
+provided herein, Alteruna AB does not grant any express or implied right to Licensee under 
+Alteruna AB patents, copyrights, trademarks, or trade secret information.
+
+Confidentiality
+This Software is Confidential Information. Licensee will not disclose Software or any comments 
+regarding Software to any third party without the prior written approval Alteruna AB. Licensee 
+will maintain the confidentiality of Software with at least the same degree of care that you use to 
+protect your own confidential and proprietary information, but not less than a reasonable degree 
+of care under the circumstances. Licensee will not be liable for the disclosure of any Confidential 
+Information which is: (a) in the public domain other than by a breach of this Agreement on 
+Licensee's part; or (b) rightfully received from a third party without any obligation of 
+confidentiality; or (c) rightfully known to Licensee without any limitation on use or disclosure prior 
+to its receipt from Alteruna AB; or (d) independently developed by Licensee's employees; or(e) 
+generally made available to third parties by Alteruna AB without restriction on disclosure.
+
+Terms Of This Agreement
+Licensee's rights with respect to the Beta Software will terminate upon the earlier of (a) the initial 
+commercial release by Alteruna AB of a generally available version of the Software or (b) six 
+months after the last date Recipient receives the Software or any update thereto. Either party may 
+terminate this Agreement at any time for any reason or no reason by providing the other party 
+advance written notice thereof. Upon any expiration or termination of this Agreement, the rights 
+and licenses granted to Licensee under this Agreement shall immediately terminate, and Licensee 
+shall immediately cease using, and will return to Alteruna AB (or, at Alteruna AB’s request, 
+destroy), the Software, Documentation, and all other tangible items in Licensee's possession or 
+control that are proprietary to or contain Confidential Information.
+
+Limitation on Liability
+Provision of any Software under this Agreement is experimental and shall not create any 
+obligation for Alteruna AB to continue to develop, productize, support, repair, offer for sale or in 
+any other way continue to provide or develop Software either to Licensee or to any other party. 
+THE SOFTWARE IS PROVIDED "AS IS" WITHOUT ANY EXPRESS OR IMPLIED WARRANTY OF 
+ANY KIND INCLUDING WARRANTIES OF MERCHANTABILITY OR FITNESS FOR ANY 
+PARTICULAR PURPOSE. IN NO EVENT SHALL Alteruna AB OR ITS SUPPLIERS BE LIABLE FOR 
+ANY DAMAGES WHATSOEVER (INCLUDING, WITHOUT LIMITATION, DAMAGES FOR LOSS 
+OF PROFITS, BUSINESS INTERRUPTION, LOSS OF INFORMATION) ARISING OUT OF THE USE 
+OF OR INABILITY TO USE THE SOFTWARE, EVEN IF Alteruna AB HAS BEEN ADVISED OF THE 
+POSSIBILITY OF SUCH DAMAGES.
+
+Export Restrictions
+Licensee acknowledges that Software is of Swedish origin. Recipient agrees to comply with all 
+applicable international and national laws that apply to the Software, as well as end-user, end-use 
+and destination restrictions issued by Swedish- and other governments.
+
+Governing Law
+This Agreement will be governed by and construed in accordance with the laws of Sweden. 
+Disputes between Licensee and Alteruna AB, that cannot be solved between the parties, shall be 
+settled in Stockholms Tingsrätt.
+
+Entire Agreement
+This Agreement constitutes the complete and exclusive agreement between Alteruna AB and 
+Licensee with respect to the subject matter hereof and supersedes all prior or contemporaneous 
+oral or written communications, proposals, representations, understandings, or agreements not 
+specifically incorporated herein. This Agreement may not be amended except in a writing duly 
+signed by an authorized representative of Alteruna AB and Licensee.

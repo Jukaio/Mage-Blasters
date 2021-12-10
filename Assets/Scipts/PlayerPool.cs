@@ -4,9 +4,4 @@
 	{
 		that.gameObject.SetActive(false);
 	}
-
-	protected override void OnRelease(Player that)
-	{
-		that.gameObject.SetActive(false);
-	}
 }

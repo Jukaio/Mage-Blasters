@@ -45,11 +45,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   default: {fileID: 2405731992228785279, guid: c57b28a59bfc3cd4b910973ddbb3b128, type: 3}
-  pool:
+  poolParameters:
     minCapacity: 0
     maxCapacity: 1
-    isSafe: 0
   fastDestroy: 1
+  isSafe: 0
 --- !u!1 &5038233133743342492
 GameObject:
   m_ObjectHideFlags: 0
@@ -154,7 +154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ec1c6aafc39d485b9951752020d245a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bomb:
+  bomber:
     bombPool: {fileID: 5038233132304352230}
     bombParameters:
       tickTime: 3

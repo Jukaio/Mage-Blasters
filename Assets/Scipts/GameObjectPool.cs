@@ -13,8 +13,10 @@ public class GameObjectPool : MonoBehaviour,  IObjectPool<GameObject>
 	[SerializeField] private Event onReceiveGameObject = null;
 	[SerializeField] private Event onReleaseGameObject = null;
 
-	[SerializeField] private ObjectPool<GameObject> pool = null;
+	[SerializeField] private PoolParameters poolParameters;
+	[SerializeField] private bool isSafe = false;
 
+	private IObjectPool<GameObject> pool = null;
 	public int Count => pool.Count;
 
 	public int Capacity => pool.Capacity;
@@ -27,10 +29,11 @@ public class GameObjectPool : MonoBehaviour,  IObjectPool<GameObject>
 	{
 		var min = pool != null ? pool.MinCapacity : 0;
 		var max = pool != null ? pool.MaxCapacity : int.MaxValue;
-		var isSafe = pool != null ? pool.IsSafe : false;
 
-		pool = new ObjectPool<GameObject>(CreateInstance, min, max, isSafe)
-			.SetOnClear(DestroyInstance);
+		pool = isSafe ? new SafeObjectPool<GameObject>(CreateInstance, poolParameters)
+							.SetOnClear(DestroyInstance) :
+						new ObjectPool<GameObject>(CreateInstance, poolParameters)
+							.SetOnClear(DestroyInstance);
 	}
 
 	private GameObject CreateInstance()
@@ -85,5 +88,23 @@ public class GameObjectPool : MonoBehaviour,  IObjectPool<GameObject>
 	public bool TryReceive(out GameObject that)
 	{
 		return pool.TryReceive(out that);
+	}
+
+	public IObjectPool<GameObject> SetOnReceive(IObjectPool<GameObject>.OnReceive onReceive)
+	{
+		_ = pool.SetOnReceive(onReceive);
+		return this;
+	}
+
+	public IObjectPool<GameObject> SetOnRelease(IObjectPool<GameObject>.OnRelease onRelease)
+	{
+		_ = pool.SetOnRelease(onRelease);
+		return this;
+	}
+
+	public IObjectPool<GameObject> SetOnClear(IObjectPool<GameObject>.OnClear onClear)
+	{
+		_ = pool.SetOnClear(onClear);
+		return this;
 	}
 }

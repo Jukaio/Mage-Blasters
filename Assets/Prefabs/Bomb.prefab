@@ -272,7 +272,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   default: {fileID: 8565191467626089538, guid: 9f27a5e7d28fb0449903f3719a1225a4, type: 3}
-  pool:
+  poolParameters:
     minCapacity: 0
-    maxCapacity: 4096
+    maxCapacity: 2147483647
   fastDestroy: 1
+  isSafe: 0
