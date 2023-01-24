@@ -1,4 +1,4 @@
-# Mage-Busters
+# Mage Blasters
 
 Check it out here: https://jukaio.itch.io/mage-blasters
 
