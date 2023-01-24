@@ -5,7 +5,7 @@ Check it out here: https://jukaio.itch.io/mage-blasters
 ![yayy](https://user-images.githubusercontent.com/47029889/214387721-4bec7d3f-c12f-4dd0-8255-0c758f7610d9.gif)
 
 
-The game so far is a little bomberman clone with a Menu and Gameplay
+The game so far is a little bomberman clone with a Menu, simple but classic gameplay and local multiplayer!
 The menu allows each player to decide if they want to play with up to four players and it lets them check the controls for their chosen character slot.
 The gameplay is simple bomberman with some upgrades and such.
 
